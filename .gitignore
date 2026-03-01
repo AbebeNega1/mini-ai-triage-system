@@ -1,0 +1,17 @@
+# Node
+node_modules/
+
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pkl
+
+# React build
+dist/
+build/
+
+# Logs
+*.log
