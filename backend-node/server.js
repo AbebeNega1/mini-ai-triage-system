@@ -26,7 +26,24 @@ db.connect((err) => {
     console.log("Connected to MySQL database");
   }
 });
+const createTableQuery = `
+CREATE TABLE IF NOT EXISTS patients (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  age INT NOT NULL,
+  symptoms TEXT NOT NULL,
+  prediction VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+`;
 
+db.query(createTableQuery, (err) => {
+  if (err) {
+    console.error("Table creation error:", err);
+  } else {
+    console.log("Patients table ready");
+  }
+});
 // ===============================
 // Test Route
 // ===============================
