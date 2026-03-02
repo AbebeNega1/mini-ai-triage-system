@@ -22,12 +22,15 @@ db.connect((err) => {
   }
 });
 const createTableQuery = `
-CREATE TABLE IF NOT EXISTS patients (
+CREATE TABLE IF NOT EXISTS triage_records (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
   age INT NOT NULL,
-  symptoms TEXT NOT NULL,
+  temperature FLOAT NOT NULL,
+  pain_level INT NOT NULL,
+  breathing_difficulty INT NOT NULL,
+  heart_rate INT NOT NULL,
   prediction VARCHAR(100),
+  confidence FLOAT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 `;
@@ -36,7 +39,7 @@ db.query(createTableQuery, (err) => {
   if (err) {
     console.error("Table creation error:", err);
   } else {
-    console.log("Patients table ready");
+    console.log("Triage table ready");
   }
 });
 // ===============================
@@ -59,7 +62,7 @@ app.post("/api/triage", async (req, res) => {
       heart_rate,
     } = req.body;
 
-    // Convert values to numbers
+    // Convert to numbers
     const numericAge = Number(age);
     const numericTemp = Number(temperature);
     const numericPain = Number(pain_level);
@@ -67,38 +70,26 @@ app.post("/api/triage", async (req, res) => {
     const numericHeart = Number(heart_rate);
 
     // ===============================
-    // 1️⃣ Call ML Service (Flask)
+    // 🔥 TEMPORARY FAKE ML RESPONSE
     // ===============================
-    const mlResponse = await axios.post(
-      "http://127.0.0.1:5001/predict",
-      {
-        age: numericAge,
-        temperature: numericTemp, // ✅ send temperature
-        pain_level: numericPain,
-        breathing_difficulty: numericBreathing,
-        heart_rate: numericHeart,
-      }
-    );
+    const prediction = numericTemp > 38 || numericHeart > 110
+      ? "High Risk"
+      : "Low Risk";
 
-    const { prediction, confidence } = mlResponse.data;
+    const confidence = 0.85;
 
     // ===============================
-    // 2️⃣ Convert temperature → fever for DB
-    // ===============================
-    const fever = numericTemp > 37.5 ? 1 : 0;
-
-    // ===============================
-    // 3️⃣ Insert into MySQL
+    // Insert into MySQL
     // ===============================
     const query = `
-  INSERT INTO triage_records
-  (age, temperature, pain_level, breathing_difficulty, heart_rate, prediction, confidence)
-  VALUES (?, ?, ?, ?, ?, ?, ?)
-`;
+      INSERT INTO triage_records
+      (age, temperature, pain_level, breathing_difficulty, heart_rate, prediction, confidence)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
 
     const values = [
       numericAge,
-      fever,
+      numericTemp,
       numericPain,
       numericBreathing,
       numericHeart,
@@ -121,13 +112,8 @@ app.post("/api/triage", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("ML service error:", error.message);
-
-    if (error.response) {
-      console.error("Flask response data:", error.response.data);
-    }
-
-    res.status(500).json({ error: "ML service failed" });
+    console.error("Server error:", error.message);
+    res.status(500).json({ error: "Server failed" });
   }
 });
 // ===============================
