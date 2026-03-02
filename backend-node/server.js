@@ -73,10 +73,10 @@ app.post("/api/triage", async (req, res) => {
     // 🔥 TEMPORARY FAKE ML RESPONSE
     // ===============================
     const prediction = numericTemp > 38 || numericHeart > 110
-      ? "High Risk"
-      : "Low Risk";
+  ? "High"
+  : "Low";
 
-    const confidence = 0.85;
+const confidence = 0.85;
 
     // ===============================
     // Insert into MySQL
