@@ -22,11 +22,11 @@ function PatientTable() {
 };
 const getPriorityInfo = (prediction) => {
   switch (prediction) {
-    case 0:
+    case "Low":
       return { label: "Low", className: "low" };
-    case 1:
+    case "Medium":
       return { label: "Medium", className: "medium" };
-    case 2:
+    case "High":
       return { label: "High", className: "high" };
     default:
       return { label: "Unknown", className: "" };
@@ -36,10 +36,10 @@ const getPriorityInfo = (prediction) => {
     <div className="table-container">
       <h2>Patient Records</h2>
 <div className="filter-buttons">
-  <button onClick={() => setFilter("all")}>All</button>
-  <button onClick={() => setFilter(2)}>High</button>
-  <button onClick={() => setFilter(1)}>Medium</button>
-  <button onClick={() => setFilter(0)}>Low</button>
+<button onClick={() => setFilter("all")}>All</button>
+<button onClick={() => setFilter("High")}>High</button>
+<button onClick={() => setFilter("Medium")}>Medium</button>
+<button onClick={() => setFilter("Low")}>Low</button>
 </div>
       <table>
         <thead>
