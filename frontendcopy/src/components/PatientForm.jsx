@@ -20,7 +20,7 @@ const [loading, setLoading] = useState(false);
   e.preventDefault();
 setLoading(true);
   try {
-    const response = await fetch("http://localhost:5000/api/triage", {
+    const response = await fetch("https://mini-ai-triage-system-production.up.railway.app/api/triage", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
